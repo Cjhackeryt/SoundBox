@@ -44,6 +44,19 @@ jobs:
           Compress-Archive -Path artifacts\plugin\* -DestinationPath SoundBox-${{ github.ref_name }}.zip
           Move-Item SoundBox-${{ github.ref_name }}.zip SoundBox-${{ github.ref_name }}.macroDeckPlugin -Force
 
+      - name: Create GitHub release from changelog
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view "${{ github.ref_name }}" 2>$null
+          if ($LASTEXITCODE -ne 0) {
+            gh release create "${{ github.ref_name }}" --title "SoundBox ${{ github.ref_name }}" --notes-file CHANGELOG.md
+            if ($LASTEXITCODE -ne 0) {
+              exit $LASTEXITCODE
+            }
+          }
+
       - name: Upload package to GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
