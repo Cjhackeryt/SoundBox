@@ -84,7 +84,7 @@ internal sealed class MonitorSettingsFlow : IConfigFlow
 
         try
         {
-            var availableDevices = _audioManager.GetOutputDevices();
+            var availableDevices = AudioManager.GetOutputDevices();
             _logger.Information("[SoundBox-Config] Enumerated playback devices: {Count}", availableDevices.Count);
             devices.AddRange(availableDevices
                 .Select(device => new ActionParameterOption { Value = device.Id, Label = device.Name }));

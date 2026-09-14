@@ -60,7 +60,7 @@ public sealed class PlaySoundAction : IDynamicOptionsActionDefinition
 
         try
         {
-            options.AddRange(_audioManager.GetOutputDevices()
+            options.AddRange(AudioManager.GetOutputDevices()
                 .Select(device => new ActionParameterOption { Value = device.Id, Label = device.Name }));
         }
         catch (Exception exception) when (exception is COMException or InvalidOperationException or ArgumentException)

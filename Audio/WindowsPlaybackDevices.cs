@@ -3,15 +3,14 @@ using NAudio.CoreAudioApi;
 
 namespace SoundBox.Audio;
 
-public sealed class WindowsPlaybackDevices : IDisposable
+public sealed class WindowsPlaybackDevices
 {
     public const string DefaultDeviceId = "DEFAULT";
 
-    private readonly MMDeviceEnumerator _enumerator = new();
-
-    public IReadOnlyList<PlaybackDevice> Enumerate()
+    public static IReadOnlyList<PlaybackDevice> Enumerate()
     {
-        var devices = _enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+        using var enumerator = new MMDeviceEnumerator();
+        var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
         try
         {
             return devices
@@ -27,13 +26,14 @@ public sealed class WindowsPlaybackDevices : IDisposable
         }
     }
 
-    public MMDevice? Resolve(string? deviceId)
+    public static MMDevice? Resolve(string? deviceId)
     {
+        using var enumerator = new MMDeviceEnumerator();
         try
         {
             if (string.Equals(deviceId, DefaultDeviceId, StringComparison.OrdinalIgnoreCase))
             {
-                return _enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                return enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
             }
 
             if (string.IsNullOrWhiteSpace(deviceId))
@@ -41,7 +41,7 @@ public sealed class WindowsPlaybackDevices : IDisposable
                 return null;
             }
 
-            var devices = _enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
+            var devices = enumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active);
             MMDevice? match = null;
             foreach (var device in devices)
             {
@@ -62,8 +62,6 @@ public sealed class WindowsPlaybackDevices : IDisposable
             return null;
         }
     }
-
-    public void Dispose() => _enumerator.Dispose();
 
     public sealed record PlaybackDevice(string Id, string Name);
 }

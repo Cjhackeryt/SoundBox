@@ -9,7 +9,6 @@ public sealed class AudioManager : IDisposable
 {
     private readonly object _sync = new();
     private readonly ILogger _logger;
-    private readonly WindowsPlaybackDevices _devices = new();
     private string? _monitorDeviceId = WindowsPlaybackDevices.DefaultDeviceId;
     private int _monitorVolume = 100;
     private PlaybackSession? _current;
@@ -31,9 +30,9 @@ public sealed class AudioManager : IDisposable
         _monitorVolume = Math.Clamp(volume, 0, 100);
     }
 
-    public IReadOnlyList<AudioDevice> GetOutputDevices()
+    public static IReadOnlyList<AudioDevice> GetOutputDevices()
     {
-        return _devices.Enumerate()
+        return WindowsPlaybackDevices.Enumerate()
             .Select(device => new AudioDevice(device.Id, device.Name))
             .ToArray();
     }
@@ -52,14 +51,14 @@ public sealed class AudioManager : IDisposable
         {
             var outputs = new List<MMDevice>();
             var monitorDeviceAdded = false;
-            var selectedOutput = _devices.Resolve(outputDeviceId ?? WindowsPlaybackDevices.DefaultDeviceId);
+            var selectedOutput = WindowsPlaybackDevices.Resolve(outputDeviceId ?? WindowsPlaybackDevices.DefaultDeviceId);
             if (selectedOutput is null)
             {
                 _logger.Warning("Selected playback device unavailable: {DeviceId}", outputDeviceId);
                 return false;
             }
 
-            var monitorOutput = monitor ? _devices.Resolve(_monitorDeviceId) : null;
+            var monitorOutput = monitor ? WindowsPlaybackDevices.Resolve(_monitorDeviceId) : null;
             if (monitor && monitorOutput is null)
             {
                 _logger.Warning("Selected monitor device unavailable: {DeviceId}", _monitorDeviceId);
@@ -123,7 +122,6 @@ public sealed class AudioManager : IDisposable
     public void Dispose()
     {
         Stop();
-        _devices.Dispose();
     }
 
     public sealed record AudioDevice(string Id, string Name);
