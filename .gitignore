@@ -1,0 +1,15 @@
+bin/
+obj/
+artifacts/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.pdb
+*.cache
+*.nupkg
+*.snupkg
+Thumbs.db
+Desktop.ini
