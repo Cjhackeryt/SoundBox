@@ -29,11 +29,19 @@ jobs:
         run: dotnet build SoundBox.csproj -c Release --no-restore
 
       - name: Publish plugin
-        run: dotnet publish SoundBox.csproj -c Release -r win-x64 --self-contained true --no-restore -o artifacts\win-x64
+        run: dotnet publish SoundBox.csproj -c Release -r win-x64 --self-contained true --no-restore -o artifacts\plugin\runtimes\win-x64
 
-      - name: Create release package
+      - name: Assemble Macro Deck plugin package
         shell: pwsh
-        run: Compress-Archive -Path artifacts\win-x64\* -DestinationPath SoundBox-${{ github.ref_name }}-win-x64.zip
+        run: |
+          Remove-Item artifacts\plugin\runtimes\win-x64\manifest.json -Force -ErrorAction SilentlyContinue
+          Remove-Item artifacts\plugin\runtimes\win-x64\macrodeck-build.json -Force -ErrorAction SilentlyContinue
+          Remove-Item artifacts\plugin\runtimes\win-x64\Assets -Recurse -Force -ErrorAction SilentlyContinue
+          Copy-Item manifest.json artifacts\plugin\manifest.json -Force
+          Copy-Item macrodeck-build.json artifacts\plugin\macrodeck-build.json -Force
+          New-Item -ItemType Directory -Path artifacts\plugin\Assets -Force | Out-Null
+          Copy-Item Assets\icon.svg artifacts\plugin\Assets\icon.svg -Force
+          Compress-Archive -Path artifacts\plugin\* -DestinationPath SoundBox-${{ github.ref_name }}-win-x64.zip
 
       - name: Upload package to GitHub release
         env:
