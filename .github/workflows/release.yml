@@ -23,7 +23,7 @@ jobs:
           dotnet-version: "10.0.x"
 
       - name: Restore dependencies
-        run: dotnet restore SoundBox.csproj
+        run: dotnet restore SoundBox.csproj -r win-x64
 
       - name: Build
         run: dotnet build SoundBox.csproj -c Release --no-restore
