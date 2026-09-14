@@ -64,3 +64,10 @@ If you find a problem or have a feature suggestion, please open an issue in this
 ## License
 
 SoundBox is licensed under the [MIT License](LICENSE).
+
+<img width="1436" height="854" alt="image" src="https://github.com/user-attachments/assets/6b205ede-a8e8-4f60-9c2d-653e2242b393" />
+
+
+<img width="748" height="365" alt="image" src="https://github.com/user-attachments/assets/05642ab4-cfde-41a6-b263-66d25d113a65" />
+
+<img width="772" height="264" alt="image" src="https://github.com/user-attachments/assets/9e703a26-fa35-431f-ae2d-31afb35ca5d9" />
