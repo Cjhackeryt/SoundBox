@@ -9,7 +9,7 @@ public sealed class AudioManager : IDisposable
 {
     private readonly object _sync = new();
     private readonly ILogger _logger;
-    private readonly MMDeviceEnumerator _deviceEnumerator = new();
+    private MMDeviceEnumerator? _deviceEnumerator;
     private PlaybackSession? _current;
 
     public AudioManager(ILogger logger)
@@ -19,7 +19,13 @@ public sealed class AudioManager : IDisposable
 
     public IReadOnlyList<AudioDevice> GetOutputDevices()
     {
-        return _deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)
+        var deviceEnumerator = GetDeviceEnumerator();
+        if (deviceEnumerator is null)
+        {
+            return [];
+        }
+
+        return deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)
             .Select(device => new AudioDevice(device.ID, device.FriendlyName))
             .ToArray();
     }
@@ -45,7 +51,14 @@ public sealed class AudioManager : IDisposable
 
             if (monitor)
             {
-                var monitorOutput = _deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+                var deviceEnumerator = GetDeviceEnumerator();
+                if (deviceEnumerator is null)
+                {
+                    _logger.Warning("No Windows audio device enumerator is available.");
+                    return false;
+                }
+
+                var monitorOutput = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
                 if (outputs.All(device => !string.Equals(device.ID, monitorOutput.ID, StringComparison.OrdinalIgnoreCase)))
                 {
                     outputs.Add(monitorOutput);
@@ -88,19 +101,38 @@ public sealed class AudioManager : IDisposable
 
     private MMDevice? FindDevice(string? deviceId)
     {
-        if (string.IsNullOrWhiteSpace(deviceId))
+        var deviceEnumerator = GetDeviceEnumerator();
+        if (deviceEnumerator is null || string.IsNullOrWhiteSpace(deviceId))
         {
             return null;
         }
 
-        return _deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)
+        return deviceEnumerator.EnumerateAudioEndPoints(DataFlow.Render, DeviceState.Active)
             .FirstOrDefault(device => string.Equals(device.ID, deviceId, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private MMDeviceEnumerator? GetDeviceEnumerator()
+    {
+        if (_deviceEnumerator is not null)
+        {
+            return _deviceEnumerator;
+        }
+
+        try
+        {
+            return _deviceEnumerator = new MMDeviceEnumerator();
+        }
+        catch (COMException exception)
+        {
+            _logger.Warning(exception, "Windows audio devices are unavailable.");
+            return null;
+        }
     }
 
     public void Dispose()
     {
         Stop();
-        _deviceEnumerator.Dispose();
+        _deviceEnumerator?.Dispose();
     }
 
     public sealed record AudioDevice(string Id, string Name);
