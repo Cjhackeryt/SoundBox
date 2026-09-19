@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Actions.PlaySound.Name" xml:space="preserve"><value>Play Sound</value></data>
+  <data name="Actions.PlaySound.Description" xml:space="preserve"><value>Plays a sound through a selected Windows audio output.</value></data>
+  <data name="Actions.PlaySound.SoundFile.Label" xml:space="preserve"><value>Sound File</value></data>
+  <data name="Actions.PlaySound.SoundFile.Description" xml:space="preserve"><value>WAV and MP3 files are supported.</value></data>
+  <data name="Actions.PlaySound.OutputDevice.Label" xml:space="preserve"><value>Output Device</value></data>
+  <data name="Actions.PlaySound.OutputDevice.Description" xml:space="preserve"><value>The Windows output device to receive the sound.</value></data>
+  <data name="Actions.PlaySound.Monitor.Label" xml:space="preserve"><value>Monitor Sound</value></data>
+  <data name="Actions.PlaySound.Monitor.Description" xml:space="preserve"><value>Also play through the default Windows playback device.</value></data>
+  <data name="Actions.PlaySound.Volume.Label" xml:space="preserve"><value>Volume</value></data>
+  <data name="Actions.PlaySound.Volume.Description" xml:space="preserve"><value>Playback volume.</value></data>
+  <data name="Actions.PlaySound.Loop.Label" xml:space="preserve"><value>Loop</value></data>
+  <data name="Actions.PlaySound.Loop.Description" xml:space="preserve"><value>Restart the sound automatically when it ends.</value></data>
+  <data name="Actions.StopSound.Name" xml:space="preserve"><value>Stop Sound</value></data>
+  <data name="Actions.StopSound.Description" xml:space="preserve"><value>Stops the currently playing SoundBox sound.</value></data>
+  <data name="Errors.AudioDevicesUnavailable" xml:space="preserve"><value>Windows audio output devices are unavailable.</value></data>
+  <data name="Errors.SoundFileRequired" xml:space="preserve"><value>A sound file is required.</value></data>
+  <data name="Errors.NoAudioOutput" xml:space="preserve"><value>No usable audio output device was found.</value></data>
+  <data name="Errors.PlaybackFailed" xml:space="preserve"><value>The sound could not be played.</value></data>
+  <data name="Errors.StopFailed" xml:space="preserve"><value>The sound could not be stopped.</value></data>
+</root>

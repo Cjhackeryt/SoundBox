@@ -24,17 +24,17 @@ public sealed class PlaySoundAction : IDynamicOptionsActionDefinition
     }
 
     public string Id => "play-sound";
-    public LocalizedText Name => "Play Sound";
-    public LocalizedText Description => "Plays a sound through a selected Windows audio output.";
+    public LocalizedText Name => Strings.Actions.PlaySound.Name();
+    public LocalizedText Description => Strings.Actions.PlaySound.Description();
     public MacroDeckPlatform Platforms => MacroDeckPlatform.Windows;
 
     public IReadOnlyList<ActionParameter> Parameters =>
     [
-        ActionParameter.File(SoundFile, "Sound File", "WAV and MP3 files are supported.", ["wav", "mp3"], true),
-        ActionParameter.DynamicChoice(OutputDevice, "Output Device", "The Windows output device to receive the sound.", required: true),
-        ActionParameter.Toggle(Monitor, "Monitor Sound", "Also play through the default Windows playback device.", true),
-        ActionParameter.Slider(Volume, 0, 100, "Volume", "Playback volume.", 1, 100),
-        ActionParameter.Toggle(Loop, "Loop", "Restart the sound automatically when it ends.")
+        ActionParameter.File(SoundFile, Strings.Actions.PlaySound.SoundFile.Label(), Strings.Actions.PlaySound.SoundFile.Description(), ["wav", "mp3"], true),
+        ActionParameter.DynamicChoice(OutputDevice, Strings.Actions.PlaySound.OutputDevice.Label(), Strings.Actions.PlaySound.OutputDevice.Description(), required: true),
+        ActionParameter.Toggle(Monitor, Strings.Actions.PlaySound.Monitor.Label(), Strings.Actions.PlaySound.Monitor.Description(), true),
+        ActionParameter.Slider(Volume, 0, 100, Strings.Actions.PlaySound.Volume.Label(), Strings.Actions.PlaySound.Volume.Description(), 1, 100),
+        ActionParameter.Toggle(Loop, Strings.Actions.PlaySound.Loop.Label(), Strings.Actions.PlaySound.Loop.Description())
     ];
 
     public IActionExecutor CreateExecutor() => new Executor(_audioManager, _logger);
@@ -59,7 +59,7 @@ public sealed class PlaySoundAction : IDynamicOptionsActionDefinition
             return Task.FromResult(new DynamicOptionsResult
             {
                 Options = [],
-                Error = "Windows audio output devices are unavailable."
+                Error = Strings.Errors.AudioDevicesUnavailable()
             });
         }
     }
@@ -80,7 +80,7 @@ public sealed class PlaySoundAction : IDynamicOptionsActionDefinition
             var filePath = GetString(context, SoundFile);
             if (string.IsNullOrWhiteSpace(filePath))
             {
-                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.InvalidParameter, "A sound file is required."));
+                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.InvalidParameter, Strings.Errors.SoundFileRequired()));
             }
 
             var outputDevice = GetString(context, OutputDevice);
@@ -92,12 +92,12 @@ public sealed class PlaySoundAction : IDynamicOptionsActionDefinition
             {
                 return _audioManager.Play(filePath, outputDevice, monitor, volume, loop)
                     ? ActionResult.SucceededTask
-                    : Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, "No usable audio output device was found."));
+                    : Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, Strings.Errors.NoAudioOutput()));
             }
             catch (Exception exception) when (exception is IOException or InvalidOperationException or ArgumentException or NotSupportedException or COMException)
             {
                 _logger.Error(exception, "Sound playback failed for {FilePath}", filePath);
-                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, "The sound could not be played."));
+                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, Strings.Errors.PlaybackFailed()));
             }
         }
 

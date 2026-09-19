@@ -19,8 +19,8 @@ public sealed class StopSoundAction : IActionDefinition
     }
 
     public string Id => "stop-sound";
-    public LocalizedText Name => "Stop Sound";
-    public LocalizedText Description => "Stops the currently playing SoundBox sound.";
+    public LocalizedText Name => Strings.Actions.StopSound.Name();
+    public LocalizedText Description => Strings.Actions.StopSound.Description();
     public MacroDeckPlatform Platforms => MacroDeckPlatform.Windows;
     public IReadOnlyList<ActionParameter> Parameters => [];
     public IActionExecutor CreateExecutor() => new Executor(_audioManager, _logger);
@@ -46,7 +46,7 @@ public sealed class StopSoundAction : IActionDefinition
             catch (Exception exception) when (exception is IOException or InvalidOperationException or COMException)
             {
                 _logger.Error(exception, "Unable to stop SoundBox playback.");
-                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, "The sound could not be stopped."));
+                return Task.FromResult(ActionResult.Failed(ActionErrorCodes.Unavailable, Strings.Errors.StopFailed()));
             }
         }
     }
