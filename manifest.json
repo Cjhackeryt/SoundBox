@@ -12,6 +12,7 @@
   "publisher": {
     "name": "cjhackeryt"
   },
+  "repository": "https://github.com/Cjhackeryt/SoundBox",
   "license": "MIT",
   "compatibility": {
     "macroDeck": ">=3.0.0-beta.11"
