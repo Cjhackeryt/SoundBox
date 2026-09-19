@@ -16,5 +16,5 @@ jobs:
     with:
       version: ${{ github.event.release.tag_name }}
       source: .
-      cli-version: 3.0.0-beta.11
+      cli-version: 3.0.0-beta.7
       changelog: ${{ github.event.release.body }}
