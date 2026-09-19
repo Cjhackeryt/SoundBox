@@ -18,3 +18,32 @@ jobs:
       source: .
       cli-version: 3.0.0-beta.7
       changelog: ${{ github.event.release.body }}
+      upload-artifact: true
+      artifact-name: soundbox-plugin
+
+  attach-release-asset:
+    name: Attach plugin to GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Download plugin artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: soundbox-plugin
+          path: release-artifact
+
+      - name: Attach .macroDeckPlugin to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -euo pipefail
+          package="$(find release-artifact -type f -name '*.macroDeckPlugin' -print -quit)"
+          if [ -z "${package}" ]; then
+            echo "::error::No .macroDeckPlugin artifact was found."
+            exit 1
+          fi
+          gh release upload "${RELEASE_TAG}" "${package}" --repo "${GITHUB_REPOSITORY}" --clobber
